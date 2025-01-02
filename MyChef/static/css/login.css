@@ -343,3 +343,26 @@ body {
         font-size: 2rem;
     }
 }
+
+/* In your login.css file */
+.flash-messages ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .flash-messages li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .flash-messages .success {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .flash-messages .error {
+    background-color: #dc3545;
+    color: white;
+  }
+  

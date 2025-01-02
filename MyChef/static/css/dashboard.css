@@ -1,0 +1,84 @@
+/* dashboard.css */
+
+/* Basic Layout */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.sidebar .profile-btn {
+  margin-bottom: 20px;
+}
+
+.sidebar .btn {
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.sidebar .btn:hover {
+  background-color: #4cae4c;
+}
+
+.sidebar .menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar .menu li {
+  margin: 20px 0;
+}
+
+.sidebar .menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.sidebar .menu a:hover {
+  color: #5cb85c;
+}
+
+.logout-btn {
+  margin-top: auto;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+h1 {
+  font-size: 36px;
+  color: #333;
+}
+
+p {
+  font-size: 18px;
+  color: #666;
+}

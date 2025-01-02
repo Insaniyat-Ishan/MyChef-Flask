@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MyChef</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile-btn">
+        <button class="btn">User Profile</button>
+      </div>
+      <!-- Add other sidebar links here -->
+      <div class="menu">
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Help</a></li>
+          <!-- Add more items as needed -->
+        </ul>
+      </div>
+      <div class="logout-btn">
+        <a href="{{ url_for('auth.logout') }}">
+          <button class="btn">Logout</button>
+        </a>
+      </div>
+      
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <h1>Welcome, {{ current_user.first_name }}!</h1>  <!-- Show logged-in user's first name -->
+      <p>Cholo bash khai.</p>
+      <!-- Add more content here -->
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>
