@@ -38,6 +38,35 @@
         <input type="file" name="profile_picture" accept="image/*">
       </div>
 
+      <!-- Allergy Options -->
+      <div class="form-group">
+        <label for="allergies">Select Allergies:</label><br>
+        {% for allergy in allergy_options %}
+          <input type="checkbox" name="allergies" value="{{ allergy }}"
+                 {% if allergy in (user.allergies or "").split(", ") %}checked{% endif %}>
+          {{ allergy }}<br>
+        {% endfor %}
+      </div>
+
+      <!-- Diet Preference -->
+      <div class="form-group">
+        <label for="diet_preference">Diet Preference:</label><br>
+        <select name="diet_preference" id="diet_preference" required>
+          <option value="Veg" {% if user.diet_preference == "Veg" %}selected{% endif %}>Vegetarian</option>
+          <option value="Non-Veg" {% if user.diet_preference == "Non-Veg" %}selected{% endif %}>Non-Vegetarian</option>
+        </select>
+      </div>
+
+      <!-- Health Issues -->
+      <div class="form-group">
+        <label for="health_issues">Select Health Issues:</label><br>
+        {% for issue in health_issue_options %}
+          <input type="checkbox" name="health_issues" value="{{ issue }}"
+                 {% if issue in (user.health_issues or "").split(", ") %}checked{% endif %}>
+          {{ issue }}<br>
+        {% endfor %}
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn-submit">Update Profile</button>
         <a href="{{ url_for('views.dashboard') }}" class="btn-back">Back to Dashboard</a>

@@ -10,7 +10,9 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150), nullable=False)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     profile_picture = db.Column(db.String(150), nullable=True, default="default.png")
-
+    allergies = db.Column(db.String(150), nullable=True)  # Comma-separated string for multiple allergies
+    diet_preference = db.Column(db.String(50), nullable=True)  # "Veg" or "Non-Veg"
+    health_issues = db.Column(db.String(150), nullable=True)  # Comma-separated string for multiple health issues
 
 ########## DB FOR RECIPE ##########
 class Recipe(db.Model):
