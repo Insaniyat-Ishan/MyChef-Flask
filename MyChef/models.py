@@ -20,7 +20,7 @@ class Recipe(db.Model):
     rating = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     
-    # Relationships
+    # Relation
     ingredients = db.relationship('Ingredient', backref='recipe', cascade='all, delete-orphan')
     instructions = db.relationship('Instruction', backref='recipe', cascade='all, delete-orphan')
 
