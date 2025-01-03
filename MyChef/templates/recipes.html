@@ -10,9 +10,9 @@
                     <div class="col-md-4">
                         <div class="card mb-4">
                             {% if recipe.image %}
-                                <img src="{{ url_for('static', filename=recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
+                                <img src="{{ url_for('static', filename= recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
                             {% else %}
-                                <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
+                                <img src="{{ url_for('static', filename='uploads/default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ recipe.name }}</h5>
