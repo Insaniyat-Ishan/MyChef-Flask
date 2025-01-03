@@ -46,7 +46,7 @@ def recipe_details():
 #Recipe adding 
 import os
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'MyChef', 'static', 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
