@@ -9,6 +9,8 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150), nullable=False)
     password = db.Column(db.String(150), nullable=False)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    profile_picture = db.Column(db.String(150), nullable=True, default="default.png")
+
 
 ########## DB FOR RECIPE ##########
 class Recipe(db.Model):
