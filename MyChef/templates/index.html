@@ -73,7 +73,10 @@
                         <a class="nav-brand" href="index.html">
                             <img src="{{ url_for('static', filename='img/core-img/newl.png') }}" alt="" width="130" height="45">
                         </a>
-
+                        <!-- Add Recipe Button -->
+                        <div class="add-recipe-btn">
+                            <a href="{{ url_for('views.add_recipe') }}" class="btn btn-primary">Add Recipe</a>
+                        </div>
                         <!-- Navbar Toggler -->
                         <div class="classy-navbar-toggler">
                             <span class="navbarToggler"><span></span><span></span><span></span></span>
