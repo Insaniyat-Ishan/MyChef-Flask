@@ -20,3 +20,7 @@ def login():
 @login_required  # This ensures that only logged-in users can access this page
 def dashboard():
     return render_template('dashboard.html', user=current_user)
+
+@views.route('/recipe_details')
+def recipe_details():
+    return render_template('recipe_details.html')

@@ -1,0 +1,25 @@
+<head>
+    <title>Recipe Vaia</title>
+</head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div class="breadcumb_area bg-img" style="background-image: url({{ url_for('static', filename='img/bg-img/breadcumb.jpg') }});">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="breadcumb_content text-center">
+                        <h2>{{ recipe.name }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="receipe-post-area section_padding_80">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col
+{% endblock %}
