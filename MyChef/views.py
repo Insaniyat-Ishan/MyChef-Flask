@@ -37,7 +37,15 @@ def dashboard():
 @views.route('/recipe_details')
 def recipe_details():
     return render_template('recipe_details.html')
+
+
 #Recipe adding 
+import os
+
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 @views.route('/add_recipe', methods=['GET', 'POST'])
 @login_required
 def add_recipe():
@@ -48,7 +56,7 @@ def add_recipe():
         description = request.form.get('description')
         cuisine = request.form.get('cuisine')
         image = request.files.get('image')  # Get the uploaded file
-        
+
         # Validate input
         if not name or not cuisine:
             flash('Name and Cuisine are required!', category='error')
@@ -56,18 +64,20 @@ def add_recipe():
 
         # Handle image saving
         if image:
+            print("I AM HERE")
             filename = secure_filename(image.filename)
-            image.save(f'uploads/{filename}')  # Save image in the uploads folder
-            image_path = f'uploads/{filename}'
+            image_path = os.path.join(UPLOAD_FOLDER, filename)  # Use the full path
+            image.save(image_path)  # Save image in the uploads folder
+            relative_image_path = f'uploads/{filename}'
         else:
-            image_path = None
-        
+            relative_image_path = None
+
         # Create a new Recipe instance
         new_recipe = Recipe(
             name=name,
             description=description,
             cuisine=cuisine,
-            image=image_path,  # Save image path to the database
+            image=relative_image_path,  # Save relative path to the database
             rating=0  # Initialize with 0 rating
         )
         db.session.add(new_recipe)
@@ -81,7 +91,7 @@ def add_recipe():
                 ingredient=ingredient.strip()
             )
             db.session.add(new_ingredient)
-        
+
         # Add instructions
         instructions = request.form.get('instructions')  # Make sure you collect all instructions
         for step_number, instruction in enumerate(instructions.split('\n'), start=1):
@@ -99,3 +109,13 @@ def add_recipe():
         return redirect(url_for('views.dashboard'))
 
     return render_template('add_recipe.html', user=current_user)
+
+
+######## ALL RECIPES ##############
+# from .models import Recipe
+
+# @views.route('/recipes', methods=['GET'])
+# def recipes():
+#     # Fetch all recipes from the database
+#     all_recipes = Recipe.query.all()
+#     return render_template('recipes.html', recipes=all_recipes)
