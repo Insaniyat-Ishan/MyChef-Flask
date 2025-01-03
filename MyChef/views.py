@@ -112,10 +112,11 @@ def add_recipe():
 
 
 ######## ALL RECIPES ##############
-# from .models import Recipe
+from . import db
+from .models import Recipe
 
-# @views.route('/recipes', methods=['GET'])
-# def recipes():
-#     # Fetch all recipes from the database
-#     all_recipes = Recipe.query.all()
-#     return render_template('recipes.html', recipes=all_recipes)
+@views.route('/recipes', methods=['GET'])
+def recipes():
+    # Fetch all recipes from the database
+    all_recipes = Recipe.query.all()
+    return render_template('recipes.html', recipes=all_recipes)
