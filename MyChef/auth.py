@@ -69,7 +69,6 @@ def sign_up():
     return render_template("login_signup.html", user=current_user)
 
 
-
 # Define the path for the uploaded files directly under static/uploads
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'MyChef', 'static', 'uploads')  # Save uploads inside static/uploads
 if not os.path.exists(UPLOAD_FOLDER):
@@ -85,7 +84,6 @@ def edit_profile():
             current_user.first_name = new_name
 
         # Update password
-        # Password hash generation
         new_password = request.form.get('password')
         if new_password:
             current_user.password = generate_password_hash(new_password)
@@ -99,9 +97,31 @@ def edit_profile():
                 profile_picture.save(filepath)
                 current_user.profile_picture = filename  # Save the filename in the database
 
+        # Update allergies
+        allergies = request.form.getlist('allergies')  # Retrieve multiple checkbox values
+        current_user.allergies = ', '.join(allergies)  # Save as a comma-separated string in the database
+
+        # Update diet preference
+        diet_preference = request.form.get('diet_preference')
+        if diet_preference:
+            current_user.diet_preference = diet_preference
+
+        # Update health issues
+        health_issues = request.form.getlist('health_issues')  # Retrieve multiple checkbox values
+        current_user.health_issues = ', '.join(health_issues)  # Save as a comma-separated string in the database
+
         # Save changes to the database
         db.session.commit()
         flash('Profile updated successfully!', category='success')
         return redirect(url_for('auth.edit_profile'))
 
-    return render_template('edit_profile.html', user=current_user)
+    # Dropdown options for allergies and health issues
+    allergy_options = ['Peanuts', 'Dairy', 'Seafood', 'Gluten', 'Soy', 'Eggs']
+    health_issue_options = ['Diabetes', 'High Blood Pressure', 'Heart Disease', 'Asthma', 'Allergies', 'Obesity']
+
+    return render_template(
+        'edit_profile.html',
+        user=current_user,
+        allergy_options=allergy_options,
+        health_issue_options=health_issue_options
+    )

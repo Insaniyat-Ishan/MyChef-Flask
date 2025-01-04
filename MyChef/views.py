@@ -125,6 +125,7 @@ def recipes():
     all_recipes = Recipe.query.all()
     return render_template('recipes.html', recipes=all_recipes)
 
+
 ######### RECIPE DETAILS ################
 @views.route('/recipe/<int:recipe_id>', methods=['GET'])
 def recipe_details(recipe_id):
@@ -133,3 +134,4 @@ def recipe_details(recipe_id):
         print("something")
         return render_template('recipe_details.html', recipe=recipe)
     return "ERROR"
+
