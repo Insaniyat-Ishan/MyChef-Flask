@@ -13,15 +13,17 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="profile-btn">
-        <button class="btn">User Profile</button>
+        <!-- Link to edit_profile.html -->
+        <a href="{{ url_for('auth.edit_profile') }}">
+          <button class="btn">User Profile</button>
+        </a>
       </div>
       <!-- Add other sidebar links here -->
       <div class="menu">
         <ul>
-          <li><a href="#">Dashboard</a></li>
-          <li><a href="#">Settings</a></li>
-          <li><a href="#">Help</a></li>
-          <!-- Add more items as needed -->
+          <li><a href="{{ url_for('views.dashboard') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('views.add_recipe') }}">Add Recipe</a></li>  <!-- Link to Add Recipe -->
+          <li><a href="{{ url_for('views.recipe_details') }}">Recipe Details</a></li>  <!-- Link to Recipe Details -->
         </ul>
       </div>
       <div class="logout-btn">
@@ -29,7 +31,6 @@
           <button class="btn">Logout</button>
         </a>
       </div>
-      
     </div>
 
     <!-- Main content -->

@@ -2,9 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from flask_migrate import Migrate  # Import Flask-Migrate
 
 # Initialize the database
 db = SQLAlchemy()
+migrate = Migrate()  # Initialize Migrate
+
 # Define the database name
 DB_NAME = "database.db"
 
@@ -15,8 +18,9 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'  # SQLite database URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking to save resources
 
-    # Initialize the database with the app
+    # Initialize the database and migrate with the app
     db.init_app(app)
+    migrate.init_app(app, db)  # Add migrate initialization here
 
     # Register the blueprints
     from .views import views

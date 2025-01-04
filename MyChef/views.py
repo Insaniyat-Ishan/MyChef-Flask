@@ -9,7 +9,6 @@
 # from yourapp import db  # Assuming you have your db object imported
 # from yourapp.models import Recipe, Ingredient, Instruction  # Assuming these models exist
 
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
@@ -20,6 +19,10 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
+    if current_user.is_authenticated:
+        # If the user is logged in, redirect to the dashboard
+        return redirect(url_for('views.dashboard'))
+    # If the user is not logged in, render the index page
     return render_template('index.html')
 
 
@@ -33,16 +36,17 @@ def login():
 def dashboard():
     return render_template('dashboard.html', user=current_user)
 
-# Recipe details
-@views.route('/recipe_details')
-def recipe_details():
-    return render_template('recipe_details.html')
+# # Recipe details
+# @views.route('/recipe_details')
+# def recipe_details():
+#     return render_template('recipe_details.html')
+
 
 
 #Recipe adding 
 import os
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'MyChef', 'static', 'uploads')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -120,3 +124,14 @@ def recipes():
     # Fetch all recipes from the database
     all_recipes = Recipe.query.all()
     return render_template('recipes.html', recipes=all_recipes)
+
+
+######### RECIPE DETAILS ################
+@views.route('/recipe/<int:recipe_id>', methods=['GET'])
+def recipe_details(recipe_id):
+    recipe = Recipe.query.get_or_404(recipe_id)
+    if recipe:
+        print("something")
+        return render_template('recipe_details.html', recipe=recipe)
+    return "ERROR"
+

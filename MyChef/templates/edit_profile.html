@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+  <div class="profile-page-container">
+    <h1>Edit Profile</h1>
+
+    <div class="profile-picture-container">
+      <!-- Display current profile picture if it exists -->
+      {% if user.profile_picture %}
+        <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" alt="Profile Picture" class="profile-picture">
+      {% else %}
+        <p>No profile picture uploaded</p>
+      {% endif %}
+    </div>
+
+    <form action="{{ url_for('auth.edit_profile') }}" method="POST" enctype="multipart/form-data" class="profile-page-form">
+      <!-- Update First Name -->
+      <div class="form-group">
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" value="{{ user.first_name }}" required>
+      </div>
+
+      <!-- Update Password -->
+      <div class="form-group">
+        <label for="password">New Password:</label>
+        <input type="password" name="password" placeholder="Enter new password">
+      </div>
+
+      <!-- Profile Picture Upload -->
+      <div class="form-group">
+        <label for="profile_picture">Change Profile Picture:</label>
+        <input type="file" name="profile_picture" accept="image/*">
+      </div>
+
+      <!-- Allergy Options -->
+      <div class="form-group">
+        <label for="allergies">Select Allergies:</label><br>
+        {% for allergy in allergy_options %}
+          <input type="checkbox" name="allergies" value="{{ allergy }}"
+                 {% if allergy in (user.allergies or "").split(", ") %}checked{% endif %}>
+          {{ allergy }}<br>
+        {% endfor %}
+      </div>
+
+      <!-- Diet Preference -->
+      <div class="form-group">
+        <label for="diet_preference">Diet Preference:</label><br>
+        <select name="diet_preference" id="diet_preference" required>
+          <option value="Veg" {% if user.diet_preference == "Veg" %}selected{% endif %}>Vegetarian</option>
+          <option value="Non-Veg" {% if user.diet_preference == "Non-Veg" %}selected{% endif %}>Non-Vegetarian</option>
+        </select>
+      </div>
+
+      <!-- Health Issues -->
+      <div class="form-group">
+        <label for="health_issues">Select Health Issues:</label><br>
+        {% for issue in health_issue_options %}
+          <input type="checkbox" name="health_issues" value="{{ issue }}"
+                 {% if issue in (user.health_issues or "").split(", ") %}checked{% endif %}>
+          {{ issue }}<br>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">Update Profile</button>
+        <a href="{{ url_for('views.dashboard') }}" class="btn-back">Back to Dashboard</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

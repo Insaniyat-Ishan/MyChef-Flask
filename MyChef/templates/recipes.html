@@ -10,14 +10,15 @@
                     <div class="col-md-4">
                         <div class="card mb-4">
                             {% if recipe.image %}
-                                <img src="{{ url_for('static', filename=recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
+                                <img src="{{ url_for('static', filename= recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
                             {% else %}
-                                <img src="{{ url_for('static', filename='default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
+                                <img src="{{ url_for('static', filename='uploads/default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ recipe.name }}</h5>
                                 <p class="card-text">{{ recipe.description[:100] }}...</p>
-                                <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+                                <a href="{{ url_for('recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+                           
                             </div>
                         </div>
                     </div>

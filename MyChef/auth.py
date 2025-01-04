@@ -1,8 +1,12 @@
+import os
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+
+from MyChef.views import UPLOAD_FOLDER
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.utils import secure_filename
 
 auth = Blueprint('auth', __name__)
 
@@ -63,3 +67,61 @@ def sign_up():
             return redirect(url_for('views.login'))
 
     return render_template("login_signup.html", user=current_user)
+
+
+# Define the path for the uploaded files directly under static/uploads
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'MyChef', 'static', 'uploads')  # Save uploads inside static/uploads
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+@auth.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        # Update first name
+        new_name = request.form.get('first_name')
+        if new_name:
+            current_user.first_name = new_name
+
+        # Update password
+        new_password = request.form.get('password')
+        if new_password:
+            current_user.password = generate_password_hash(new_password)
+
+        # Upload profile picture
+        if 'profile_picture' in request.files:
+            profile_picture = request.files['profile_picture']
+            if profile_picture:
+                filename = secure_filename(profile_picture.filename)
+                filepath = os.path.join(UPLOAD_FOLDER, filename)  # Save the image inside static/uploads
+                profile_picture.save(filepath)
+                current_user.profile_picture = filename  # Save the filename in the database
+
+        # Update allergies
+        allergies = request.form.getlist('allergies')  # Retrieve multiple checkbox values
+        current_user.allergies = ', '.join(allergies)  # Save as a comma-separated string in the database
+
+        # Update diet preference
+        diet_preference = request.form.get('diet_preference')
+        if diet_preference:
+            current_user.diet_preference = diet_preference
+
+        # Update health issues
+        health_issues = request.form.getlist('health_issues')  # Retrieve multiple checkbox values
+        current_user.health_issues = ', '.join(health_issues)  # Save as a comma-separated string in the database
+
+        # Save changes to the database
+        db.session.commit()
+        flash('Profile updated successfully!', category='success')
+        return redirect(url_for('auth.edit_profile'))
+
+    # Dropdown options for allergies and health issues
+    allergy_options = ['Peanuts', 'Dairy', 'Seafood', 'Gluten', 'Soy', 'Eggs']
+    health_issue_options = ['Diabetes', 'High Blood Pressure', 'Heart Disease', 'Asthma', 'Allergies', 'Obesity']
+
+    return render_template(
+        'edit_profile.html',
+        user=current_user,
+        allergy_options=allergy_options,
+        health_issue_options=health_issue_options
+    )
