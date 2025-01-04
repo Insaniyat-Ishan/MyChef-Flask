@@ -36,11 +36,6 @@ def login():
 def dashboard():
     return render_template('dashboard.html', user=current_user)
 
-# # Recipe details
-# @views.route('/recipe_details')
-# def recipe_details():
-#     return render_template('recipe_details.html')
-
 
 
 #Recipe adding 
@@ -124,6 +119,7 @@ def recipes():
     # Fetch all recipes from the database
     all_recipes = Recipe.query.all()
     return render_template('recipes.html', recipes=all_recipes)
+
 
 ######### RECIPE DETAILS ################
 @views.route('/recipe/<int:recipe_id>', methods=['GET'])
