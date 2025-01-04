@@ -5,5 +5,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1>{{ recipe.name }}</h1>
+    <p><strong>Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
+    <p><strong>Rating:</strong> {{ recipe.rating }}</p>
+    <p><strong>Description:</strong> {{ recipe.description or 'No description available.' }}</p>
 
+    <h2>Ingredients</h2>
+    <ul>
+        {% for ingredient in recipe.ingredients %}
+            <li>{{ ingredient.ingredient }}</li>
+        {% else %}
+            <li>No ingredients listed.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Instructions</h2>
+    <ol>
+        {% for instruction in recipe.instructions %}
+            <li>{{ instruction.step_number }}. {{ instruction.instruction }}</li>
+        {% else %}
+            <li>No instructions available.</li>
+        {% endfor %}
+    </ol>
 {% endblock %}
+
+
+
