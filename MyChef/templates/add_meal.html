@@ -8,24 +8,27 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background: url("{{ url_for('static', filename='images/steak.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
         }
         .container {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1); /* White with transparency */
             padding: 30px;
             border-radius: 10px;
             width: 100%;
             max-width: 600px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Added stronger black shadow */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
         }
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 20px;
         }
         form {
@@ -34,7 +37,7 @@
         }
         label {
             margin-bottom: 5px;
-            color: #333;
+            color: #fffefe;
             font-weight: bold;
         }
         input, select, button {
@@ -64,12 +67,6 @@
         .form-group {
             margin-bottom: 20px;
         }
-        .box {
-            background-color: #ecf0f1; /* Light grey for the box background */
-            border-radius: 10px;
-            padding: 20px;
-            width: 100%;
-        }
         .box .header {
             color: #2980b9;
             font-size: 24px;
@@ -79,7 +76,7 @@
     </style>
 </head>
 <body>
-    <div class="container box">
+    <div class="container">
         <div class="header">
             <h1>Add a New Meal</h1>
         </div>
