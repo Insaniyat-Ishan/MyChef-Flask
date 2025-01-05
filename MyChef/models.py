@@ -32,7 +32,10 @@ class Recipe(db.Model):
     rating = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     
-    # Relation
+    # Relationships
+    reviews = db.relationship('Review', backref='reviews_in_recipe', cascade='all, delete-orphan')  # Updated backref
+
+
     ingredients = db.relationship('Ingredient', backref='recipe', cascade='all, delete-orphan')
     instructions = db.relationship('Instruction', backref='recipe', cascade='all, delete-orphan')
     meal_plans = db.relationship('MealPlan', back_populates='recipe')
@@ -79,3 +82,16 @@ class RecipeTags(db.Model):
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
     tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), nullable=False)
 
+###### REVIEW MODEL ######
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text, nullable=True)
+    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+
+    # Relationships
+    user = db.relationship('User', backref='reviews')
+    recipe = db.relationship('Recipe', backref='reviews_in_recipe')  # Updated backref
+###########################

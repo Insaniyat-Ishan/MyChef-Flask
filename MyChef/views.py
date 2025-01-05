@@ -291,4 +291,20 @@ def replace_meal(meal_id, date):
             return jsonify({'success': True})
     return jsonify({'success': False})
 
-
+from .models import Review
+########## Review Part ##########
+@views.route('/recipe_details/<int:recipe_id>/add_review', methods=['POST'])
+@login_required
+def add_review(recipe_id):
+    rating = request.form.get('rating')
+    comment = request.form.get('comment')
+    review = Review(
+        recipe_id=recipe_id,
+        user_id=current_user.id,
+        rating=rating,
+        comment=comment
+    )
+    db.session.add(review)
+    db.session.commit()
+    return redirect(url_for('views.recipe_details', recipe_id=recipe_id))
+##################################
