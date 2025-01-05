@@ -101,7 +101,8 @@ def add_recipe():
             description=description,
             cuisine=cuisine,
             image=relative_image_path,  # Save relative path to the database
-            rating=0  # Initialize with 0 rating
+            rating=0,  # Initialize with 0 rating
+            user_id=current_user.id # Assign the recipe to the logged-in user
         )
         db.session.add(new_recipe)
         db.session.commit()
