@@ -135,3 +135,27 @@ def recipe_details(recipe_id):
         return render_template('recipe_details.html', recipe=recipe)
     return "ERROR"
 
+######## Handle Chatbot ################
+def generate_response(user_message):
+    if "hello" in user_message.lower():
+        return "Hi there! How can I help you today?"
+    elif "recipe" in user_message.lower():
+        return "I can help you with recipes. What type of cuisine are you interested in?"
+    else:
+        return "I'm not sure I understand. Can you please rephrase?"
+
+@views.route('/chatbot', methods=['GET'])
+def chatbot():
+    return render_template('chatbot.html')
+
+@views.route('/temp', methods=['GET'])
+def temp():
+    return render_template('temp.html')
+
+from flask import jsonify
+
+@views.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json.get('message')
+    response = generate_response(user_message)
+    return jsonify({'response': response})

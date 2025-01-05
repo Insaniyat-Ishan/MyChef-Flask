@@ -5,6 +5,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% include 'chatbot.html' %}
     <h1>{{ recipe.name }}</h1>
     <p><strong>Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
     <p><strong>Rating:</strong> {{ recipe.rating }}</p>
