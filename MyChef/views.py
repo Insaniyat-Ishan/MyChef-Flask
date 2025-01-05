@@ -181,6 +181,37 @@ def recipe_details(recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)  # Fetch the recipe or return a 404 error if not found
     return render_template('recipe_details.html', recipe=recipe)
 
+######## MY RECIPE SECTION ########
+@views.route('/my_recipes', methods=['GET'])
+@login_required
+def my_recipes():
+    # Fetch the recipes added by the current user, including reviews and average ratings
+    recipes = db.session.query(
+        Recipe,
+        func.coalesce(func.avg(Review.rating), 0).label('average_rating'),
+        func.count(Review.id).label('review_count')
+    ).outerjoin(Review).filter(Recipe.user_id == current_user.id).group_by(Recipe.id).all()
+
+    return render_template('my_recipes.html', recipes=recipes)
+
+
+
+@views.route('/delete_recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def delete_recipe(recipe_id):
+    recipe = Recipe.query.filter_by(id=recipe_id, user_id=current_user.id).first()
+    if recipe:
+        db.session.delete(recipe)
+        db.session.commit()
+        flash('Recipe deleted successfully!', category='success')
+    else:
+        flash('Recipe not found or you are not authorized to delete it.', category='error')
+    return redirect(url_for('views.my_recipes'))
+
+####################################
+
+
+
 ######## Handle Chatbot ################
 def generate_response(user_message):
     if "hello" in user_message.lower():
