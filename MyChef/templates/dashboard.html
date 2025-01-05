@@ -14,16 +14,15 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="profile-btn">
-        <!-- Link to edit_profile.html -->
         <a href="{{ url_for('auth.edit_profile') }}">
           <button class="btn">User Profile</button>
         </a>
       </div>
-      <!-- Add other sidebar links here -->
       <div class="menu">
         <ul>
           <li><a href="{{ url_for('views.dashboard') }}">Dashboard</a></li>
-          <li><a href="{{ url_for('views.add_recipe') }}">Add Recipe</a></li>  <!-- Link to Add Recipe -->
+          <li><a href="{{ url_for('views.add_recipe') }}">Add Recipe</a></li>
+          <li><a href="{{ url_for('views.add_meal') }}">Add Meal</a></li>
         </ul>
       </div>
       <div class="logout-btn">
@@ -35,9 +34,49 @@
 
     <!-- Main content -->
     <div class="main-content">
-      <h1>Welcome, {{ current_user.first_name }}!</h1>  <!-- Show logged-in user's first name -->
+      <h1>Welcome, {{ current_user.first_name }}!</h1>
       <p>Cholo bash khai.</p>
-      <!-- Add more content here -->
+
+      <!-- Weekly Meal Plan Box -->
+      <div class="meal-plan-box">
+        <h2>Weekly Meal Plan</h2>
+        <div class="calendar">
+          <table>
+            <tr>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+              <th>Sunday</th>
+            </tr>
+            <tr>
+              {% for day_info in weekly_meals %}
+              <td>
+                <p>{{ day_info.day.strftime('%A') }}<br>{{ day_info.day.strftime('%Y-%m-%d') }}</p>
+                
+                {% if day_info.meals %}
+                  {% for meal in day_info.meals %}
+                    <div class="meal-box">
+                      <p>
+                        <a href="{{ url_for('views.recipe_details', recipe_id=meal.recipe.id) }}">
+                          {{ meal.recipe.name }}
+                        </a>
+                      </p>
+                      <button onclick="removeMeal({{ meal.id }}, '{{ day_info.day.strftime('%Y-%m-%d') }}')">Remove</button>
+                      <button onclick="replaceMeal({{ meal.id }}, '{{ day_info.day.strftime('%Y-%m-%d') }}')">Replace</button>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <p>No meals planned</p>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 

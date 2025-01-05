@@ -2,6 +2,10 @@ from . import db  # No need to worry about circular import now
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
+from sqlalchemy.orm import relationship
+from flask_login import UserMixin
+from sqlalchemy.sql import func
+from flask import current_app
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,6 +17,10 @@ class User(db.Model, UserMixin):
     allergies = db.Column(db.String(150), nullable=True)  # Comma-separated string for multiple allergies
     diet_preference = db.Column(db.String(50), nullable=True)  # "Veg" or "Non-Veg"
     health_issues = db.Column(db.String(150), nullable=True)  # Comma-separated string for multiple health issues
+
+    # Define the relationship to the MealPlan model using back_populates
+    meal_plans = db.relationship('MealPlan', back_populates='user')
+
 
 ########## DB FOR RECIPE ##########
 class Recipe(db.Model):
@@ -27,6 +35,7 @@ class Recipe(db.Model):
     # Relation
     ingredients = db.relationship('Ingredient', backref='recipe', cascade='all, delete-orphan')
     instructions = db.relationship('Instruction', backref='recipe', cascade='all, delete-orphan')
+    meal_plans = db.relationship('MealPlan', back_populates='recipe')
 
 
 class Ingredient(db.Model):
@@ -41,3 +50,18 @@ class Instruction(db.Model):
     step_number = db.Column(db.Integer, nullable=False)
     instruction = db.Column(db.Text, nullable=False)
 ##############################################
+
+
+class MealPlan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    date = db.Column(db.Date)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)  # Foreign key to Recipe
+
+    # Explicit relationship names to avoid conflict
+    user = db.relationship('User', back_populates='meal_plans')
+    recipe = db.relationship('Recipe', back_populates='meal_plans')
+
+
+    

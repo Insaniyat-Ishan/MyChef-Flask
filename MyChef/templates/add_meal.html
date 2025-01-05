@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Meal</title>
+</head>
+<body>
+    <h1>Add a New Meal</h1>
+    <form action="{{ url_for('views.add_meal') }}" method="POST">
+        <label for="name">Meal Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="date">Meal Date:</label>
+        <input type="date" id="date" name="date" required>
+        
+        <label for="recipe_id">Select Recipe:</label>
+        <select id="recipe_id" name="recipe_id" required>
+            {% for recipe in recipes %}
+                <option value="{{ recipe.id }}">{{ recipe.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Add Meal</button>
+    </form>
+</body>
+</html>

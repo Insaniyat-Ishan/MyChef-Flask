@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit Meal</h2>
+
+<form method="POST">
+    <!-- Meal Name Input -->
+    <div>
+        <label for="meal_name">Meal Name:</label>
+        <input type="text" id="meal_name" name="meal_name" value="{{ meal.name }}" required>
+    </div>
+
+    <!-- Meal Date Input -->
+    <div>
+        <label for="meal_date">Meal Date:</label>
+        <input type="date" id="meal_date" name="meal_date" value="{{ meal.date }}" required>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit">Update Meal</button>
+</form>
+
+{% endblock %}

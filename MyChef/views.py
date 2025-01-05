@@ -8,11 +8,15 @@
 # from werkzeug.utils import secure_filename
 # from yourapp import db  # Assuming you have your db object imported
 # from yourapp.models import Recipe, Ingredient, Instruction  # Assuming these models exist
-
+from flask import Blueprint, render_template
+from flask_login import login_required, current_user
+from .models import MealPlan
+from datetime import datetime, timedelta
+import datetime
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
-from .models import Recipe, Ingredient, Instruction
+from .models import MealPlan, Recipe, Ingredient, Instruction
 from werkzeug.utils import secure_filename
 
 views = Blueprint('views', __name__)
@@ -31,15 +35,30 @@ def login():
     return render_template('login_signup.html')
 
 
-@views.route('/dashboard')
-@login_required  # This ensures that only logged-in users can access this page
-def dashboard():
-    return render_template('dashboard.html', user=current_user)
+from datetime import datetime, timedelta, date  # Ensure you import timedelta here
 
-# # Recipe details
-# @views.route('/recipe_details')
-# def recipe_details():
-#     return render_template('recipe_details.html')
+
+@views.route('/dashboard')
+@login_required
+def user_dashboard():
+    # Get the current date and calculate the start of the week (Monday)
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+    
+    # Query the meal plans for the current user
+    meal_plans = MealPlan.query.filter_by(user_id=current_user.id).all()
+
+    # Prepare a list of meals for each day of the week
+    weekly_meals = [
+        {
+            'day': start_of_week + timedelta(days=day),
+            'meals': [meal for meal in meal_plans if meal.date == (start_of_week + timedelta(days=day)).date()]
+        }
+        for day in range(7)
+    ]
+
+    # Render the dashboard template and pass the weekly meals
+    return render_template('dashboard.html', weekly_meals=weekly_meals, start_of_week=start_of_week)
 
 
 
@@ -159,3 +178,91 @@ def chat():
     user_message = request.json.get('message')
     response = generate_response(user_message)
     return jsonify({'response': response})
+
+
+@views.route('/dashboard')
+@login_required
+def dashboard():
+    # Fetch the meal plan data for the logged-in user for the current week
+    meal_plans = MealPlan.query.filter_by(user_id=current_user.id).all()
+    
+    # Get the current date and calculate the week range
+    today = datetime.today()
+    start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday of the current week
+    end_of_week = start_of_week + datetime.timedelta(days=6)  # Sunday of the current week
+    
+    # Filter the meal plans to show only those within this week
+    weekly_meals = [meal for meal in meal_plans if start_of_week <= meal.date <= end_of_week]
+
+    # Pass meal plan data to the template
+    return render_template('dashboard.html', meals=weekly_meals, start_of_week=start_of_week)
+
+
+from flask import  request
+
+# views.py
+from flask import render_template, request, redirect, url_for
+from .models import MealPlan, Recipe
+from flask_login import login_required, current_user
+
+@views.route('/add_meal', methods=['GET', 'POST'])
+@login_required
+def add_meal():
+    if request.method == 'POST':
+        # Get the form data
+        name = request.form['name']
+        date_string = request.form['date']  # Date format 'YYYY-MM-DD'
+        recipe_id = request.form['recipe_id']
+        
+        # Convert the date string to a datetime.date object
+        date_object = datetime.strptime(date_string, '%Y-%m-%d').date()
+
+        # Create a new meal plan entry
+        meal_plan = MealPlan(
+            name=name,
+            date=date_object,
+            user_id=current_user.id,  # Use the logged-in user's ID
+            recipe_id=recipe_id
+        )
+
+        # Add and commit to the database
+        db.session.add(meal_plan)
+        db.session.commit()
+
+        flash('Meal added successfully!', category='success')
+        return redirect(url_for('views.user_dashboard'))  # Redirect to user dashboard
+
+    # Fetch all recipes to display in the dropdown
+    recipes = Recipe.query.all()
+    return render_template('add_meal.html', recipes=recipes)
+
+
+
+# Route for removing a meal
+@views.route('/remove_meal/<int:meal_id>/<date>', methods=['POST'])
+def remove_meal(meal_id, date):
+    meal = MealPlan.query.get(meal_id)  # Changed Meal to MealPlan
+    if meal:
+        db.session.delete(meal)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
+# Route for replacing a meal
+@views.route('/replace_meal/<int:meal_id>/<date>', methods=['POST'])
+def replace_meal(meal_id, date):
+    data = request.get_json()
+    new_recipe_name = data.get('newRecipeName')
+
+    # Find the new recipe (this can be adjusted to your logic for replacing)
+    new_recipe = Recipe.query.filter_by(name=new_recipe_name).first()
+
+    if new_recipe:
+        meal = MealPlan.query.get(meal_id)  # Changed Meal to MealPlan
+        if meal:
+            meal.recipe = new_recipe
+            db.session.commit()
+            return jsonify({'success': True})
+    return jsonify({'success': False})
+
+
