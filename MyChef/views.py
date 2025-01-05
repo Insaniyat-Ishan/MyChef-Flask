@@ -173,13 +173,28 @@ def recipes():
     return render_template('recipes.html', recipes=filtered_recipes)
 
 
-
-
-
 @views.route('/recipe_details/<int:recipe_id>', methods=['GET'])
 def recipe_details(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)  # Fetch the recipe or return a 404 error if not found
-    return render_template('recipe_details.html', recipe=recipe)
+    recipe = Recipe.query.get_or_404(recipe_id)
+    
+    # Calculate the average rating
+    average_rating = (
+        db.session.query(func.avg(Review.rating))
+        .filter(Review.recipe_id == recipe_id)
+        .scalar()
+    )
+    
+    # Round the average rating to one decimal place if it exists
+    average_rating = round(average_rating, 1) if average_rating else "No ratings yet"
+    
+    return render_template('recipe_details.html', recipe=recipe, average_rating=average_rating)
+
+
+
+# @views.route('/recipe_details/<int:recipe_id>', methods=['GET'])
+# def recipe_details(recipe_id):
+#     recipe = Recipe.query.get_or_404(recipe_id)  # Fetch the recipe or return a 404 error if not found
+#     return render_template('recipe_details.html', recipe=recipe)
 
 ######## MY RECIPE SECTION ########
 @views.route('/my_recipes', methods=['GET'])

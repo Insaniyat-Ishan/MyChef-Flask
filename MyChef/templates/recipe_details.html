@@ -24,9 +24,10 @@
         <!-- Styling for the recipe details section -->
         <div class="recipe-details">
             <p><strong>Cuisine:</strong> <span class="detail">{{ recipe.cuisine or 'Not specified' }}</span></p>
-            <p><strong>Rating:</strong> <span class="detail">{{ recipe.rating }}</span></p>
+            <p><strong>Average Rating:</strong> <span class="detail">{{ average_rating }}</span></p>
             <p><strong>Description:</strong> <span class="detail">{{ recipe.description or 'No description available.' }}</span></p>
         </div>
+        
 
         <h2>Ingredients</h2>
         <ul>
