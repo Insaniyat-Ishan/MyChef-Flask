@@ -82,10 +82,22 @@
                                 </div>
 
                                 <!-- Login/Signup Button -->
+                                    <!-- Conditionally render the Dashboard or Login/Signup button -->
+                                {% if current_user.is_authenticated %}
+                                <!-- Dashboard Button -->
+                                <div class="dashboard-btn">
+                                    <a href="{{ url_for('views.dashboard') }}" class="btn btn-primary">Dashboard</a>
+                                </div>
+                                {% else %}
+                                <!-- Login/Signup Button -->
                                 <div class="auth-btn">
                                     <a href="{{ url_for('views.login') }}" class="btn btn-auth">Login/Signup</a>
                                 </div>
-                            </div>
+                                {% endif %}
+                                <!-- <div class="auth-btn">
+                                    <a href="{{ url_for('views.login') }}" class="btn btn-auth">Login/Signup</a>
+                                </div>
+                            </div> -->
                             <!-- Nav End -->
                         </div>
                     </nav>
