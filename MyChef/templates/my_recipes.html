@@ -1,37 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>My Recipes</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Cuisine</th>
-            <th>Date Created</th>
-            <th>Average Rating</th>
-            <th>Number of Reviews</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for recipe, average_rating, review_count in recipes %}
-        <tr>
-            <td>{{ recipe.name }}</td>
-            <td>{{ recipe.cuisine }}</td>
-            <td>{{ recipe.date_created.strftime('%Y-%m-%d') }}</td>
-            <td>{{ average_rating|round(1) }}</td>
-            <td>{{ review_count }}</td>
-            <td>
-                <!-- View Details Button -->
-                <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+<!-- Link to CSS file -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_recipes.css') }}">
 
-                <!-- Delete Button -->
-                <form action="{{ url_for('views.delete_recipe', recipe_id=recipe.id) }}" method="post" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!-- Link to JS file -->
+<script src="{{ url_for('static', filename='js/my_recipes.js') }}"></script>
+
+<div class="container">
+    <h1>My Recipes</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Cuisine</th>
+                <th>Date Created</th>
+                <th>Average Rating</th>
+                <th>Number of Reviews</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recipe, average_rating, review_count in recipes %}
+            <tr>
+                <td>{{ recipe.name }}</td>
+                <td>{{ recipe.cuisine }}</td>
+                <td>{{ recipe.date_created.strftime('%Y-%m-%d') }}</td>
+                <td>{{ average_rating|round(1) }}</td>
+                <td>{{ review_count }}</td>
+                <td>
+                    <!-- View Details Button -->
+                    <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+
+                    <!-- Delete Button with Confirmation -->
+                    <form action="{{ url_for('views.delete_recipe', recipe_id=recipe.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
