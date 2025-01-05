@@ -10,7 +10,7 @@
 # from yourapp.models import Recipe, Ingredient, Instruction  # Assuming these models exist
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from .models import MealPlan
+from .models import MealPlan, Tag
 from datetime import datetime, timedelta
 import datetime
 from flask import Blueprint, render_template, request, flash, redirect, url_for
@@ -135,24 +135,50 @@ def add_recipe():
 
 
 ######## ALL RECIPES ##############
+from sqlalchemy import func
+
+# Example of handling the search logic in your `recipes` route
+from flask import request, render_template
 from . import db
 from .models import Recipe
+import logging
 
-@views.route('/recipes', methods=['GET'])
+@views.route('/recipes', methods=['GET', 'POST'])
 def recipes():
-    # Fetch all recipes from the database
-    all_recipes = Recipe.query.all()
-    return render_template('recipes.html', recipes=all_recipes)
+    filters = []
+    name_query = request.args.get('name')  # Search for recipe name
+    cuisine_query = request.args.get('cuisine')  # Search for cuisine
+
+    # Debugging: Log incoming query params
+    logging.debug(f"Searching for Name: {name_query}, Cuisine: {cuisine_query}")
+
+    # Apply filter for recipe name if provided
+    if name_query:
+        filters.append(Recipe.name.ilike(f'%{name_query}%'))
+
+    # Apply filter for cuisine if provided
+    if cuisine_query:
+        filters.append(Recipe.cuisine.ilike(f'%{cuisine_query}%'))
+
+    # Debugging: Log the final filter query
+    logging.debug(f"Final filters: {filters}")
+
+    # Apply the filters to the query
+    filtered_recipes = Recipe.query.filter(*filters).all()
+
+    # Debugging: Log the SQL query
+    logging.debug(f"SQL Query: {str(Recipe.query.filter(*filters))}")
+
+    return render_template('recipes.html', recipes=filtered_recipes)
 
 
-######### RECIPE DETAILS ################
-@views.route('/recipe/<int:recipe_id>', methods=['GET'])
+
+
+
+@views.route('/recipe_details/<int:recipe_id>', methods=['GET'])
 def recipe_details(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
-    if recipe:
-        print("something")
-        return render_template('recipe_details.html', recipe=recipe)
-    return "ERROR"
+    recipe = Recipe.query.get_or_404(recipe_id)  # Fetch the recipe or return a 404 error if not found
+    return render_template('recipe_details.html', recipe=recipe)
 
 ######## Handle Chatbot ################
 def generate_response(user_message):

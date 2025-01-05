@@ -36,6 +36,7 @@ class Recipe(db.Model):
     ingredients = db.relationship('Ingredient', backref='recipe', cascade='all, delete-orphan')
     instructions = db.relationship('Instruction', backref='recipe', cascade='all, delete-orphan')
     meal_plans = db.relationship('MealPlan', back_populates='recipe')
+    tags = db.relationship('Tag', secondary='recipe_tags', backref=db.backref('tags_in_recipe', lazy='dynamic'))
 
 
 class Ingredient(db.Model):
@@ -64,4 +65,17 @@ class MealPlan(db.Model):
     recipe = db.relationship('Recipe', back_populates='meal_plans')
 
 
-    
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    # Relationship with Recipe (many-to-many via RecipeTags association table)
+    recipes = db.relationship('Recipe', secondary='recipe_tags', backref=db.backref('recipes_in_tag', lazy='dynamic'))
+
+
+
+class RecipeTags(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), nullable=False)
+
