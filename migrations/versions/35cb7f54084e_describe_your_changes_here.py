@@ -22,7 +22,7 @@ def upgrade():
         batch_op.add_column(sa.Column('name', sa.String(length=100), nullable=True))
         batch_op.add_column(sa.Column('date', sa.Date(), nullable=True))
         batch_op.add_column(sa.Column('recipe_id', sa.Integer(), nullable=False))
-        batch_op.create_foreign_key('fk_meal_plan_recipe', 'recipe', ['recipe_id'], ['id'])  # Constraint name added here
+        batch_op.create_foreign_key('fk_meal_plan_recipe', 'recipe', ['recipe_id'], ['id'])  # Foreign key constraint added
         batch_op.drop_column('day')
         batch_op.drop_column('recipe_title')
         batch_op.drop_column('timestamp')
@@ -36,7 +36,7 @@ def downgrade():
         batch_op.add_column(sa.Column('timestamp', sa.DATETIME(), nullable=True))
         batch_op.add_column(sa.Column('recipe_title', sa.VARCHAR(length=150), nullable=False))
         batch_op.add_column(sa.Column('day', sa.VARCHAR(length=10), nullable=False))
-        batch_op.drop_constraint('fk_meal_plan_recipe', type_='foreignkey')  # Constraint name used here
+        batch_op.drop_constraint('fk_meal_plan_recipe', type_='foreignkey')  # Foreign key constraint dropped
         batch_op.drop_column('recipe_id')
         batch_op.drop_column('date')
         batch_op.drop_column('name')
