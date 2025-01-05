@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - MyChef</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <style>
+    /* Inline CSS for the background image, in case the CSS file is not updated */
+    body {
+      background-image: url('{{ url_for('static', filename='images/macaron.jpg') }}');
+      background-size: cover; /* Ensures the image covers the entire background */
+      background-position: center; /* Centers the image */
+      background-repeat: no-repeat; /* Prevents tiling of the image */
+    }
+  </style>
 </head>
 
 <body>
@@ -23,7 +32,6 @@
           <li><a href="{{ url_for('views.add_recipe') }}">Add Recipe</a></li>
           <li><a href="{{ url_for('views.recipes') }}">View All Recipes</a></li>
           <li><a href="{{ url_for('views.add_meal') }}">Add Meal</a></li>
-          <!-- Corrected button for favorites -->
           <li><a href="{{ url_for('views.favorites') }}">
             <button class="btn">View Favorites</button>
           </a></li>
@@ -31,7 +39,7 @@
             <a href="{{ url_for('views.my_recipes') }}">
                 <button class="btn">My Recipes</button>
             </a>
-        </li>
+          </li>
         </ul>
       </div>
       <div class="logout-btn">
@@ -44,7 +52,7 @@
     <!-- Main content -->
     <div class="main-content">
       <h1>Welcome, {{ current_user.first_name }}!</h1>
-      <p>Cholo bash khai.</p>
+      
 
       <!-- Weekly Meal Plan Box -->
       <div class="meal-plan-box">
