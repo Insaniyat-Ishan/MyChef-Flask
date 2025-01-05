@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     allergies = db.Column(db.String(150), nullable=True)
     diet_preference = db.Column(db.String(50), nullable=True)
     health_issues = db.Column(db.String(150), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     # Relationship to MealPlan
     meal_plans = db.relationship('MealPlan', back_populates='user')
