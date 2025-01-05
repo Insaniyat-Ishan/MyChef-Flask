@@ -4,24 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Meal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Added stronger black shadow */
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input, select, button {
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f1f1f1;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: #fff;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .box {
+            background-color: #ecf0f1; /* Light grey for the box background */
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+        }
+        .box .header {
+            color: #2980b9;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add a New Meal</h1>
-    <form action="{{ url_for('views.add_meal') }}" method="POST">
-        <label for="name">Meal Name:</label>
-        <input type="text" id="name" name="name" required>
-        
-        <label for="date">Meal Date:</label>
-        <input type="date" id="date" name="date" required>
-        
-        <label for="recipe_id">Select Recipe:</label>
-        <select id="recipe_id" name="recipe_id" required>
-            {% for recipe in recipes %}
-                <option value="{{ recipe.id }}">{{ recipe.name }}</option>
-            {% endfor %}
-        </select>
-        
-        <button type="submit">Add Meal</button>
-    </form>
+    <div class="container box">
+        <div class="header">
+            <h1>Add a New Meal</h1>
+        </div>
+        <form action="{{ url_for('views.add_meal') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Meal Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Meal Date:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="recipe_id">Select Recipe:</label>
+                <select id="recipe_id" name="recipe_id" required>
+                    {% for recipe in recipes %}
+                        <option value="{{ recipe.id }}">{{ recipe.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit"><i class="fas fa-plus"></i> Add Meal</button>
+        </form>
+    </div>
 </body>
 </html>

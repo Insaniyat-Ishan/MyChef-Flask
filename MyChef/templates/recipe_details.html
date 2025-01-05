@@ -1,61 +1,75 @@
 <head>
-    <title>Recipe Vaia</title>
+    <title>{{ recipe.name }} - Recipe Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recipe.css') }}">
 </head>
 
 {% extends 'base.html' %}
 
 {% block content %}
     {% include 'chatbot.html' %}
-    <h1>{{ recipe.name }}</h1>
-    <p><strong>Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
-    <p><strong>Rating:</strong> {{ recipe.rating }}</p>
-    <p><strong>Description:</strong> {{ recipe.description or 'No description available.' }}</p>
 
-    <h2>Ingredients</h2>
-    <ul>
-        {% for ingredient in recipe.ingredients %}
-            <li>{{ ingredient.ingredient }}</li>
-        {% else %}
-            <li>No ingredients listed.</li>
-        {% endfor %}
-    </ul>
+    <div class="recipe-container">
+        <h1>{{ recipe.name }}</h1>
+        
+        <!-- Recipe Image with better handling -->
+        <div class="recipe-image">
+            {% if recipe.image %}
+                <img src="{{ url_for('static', filename= recipe.image) }}" alt="{{ recipe.name }}" class="recipe-img">
+                <!-- <img src="{{ url_for('static', filename= recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200"> -->
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+        </div>
+        
+        <!-- Styling for the recipe details section -->
+        <div class="recipe-details">
+            <p><strong>Cuisine:</strong> <span class="detail">{{ recipe.cuisine or 'Not specified' }}</span></p>
+            <p><strong>Rating:</strong> <span class="detail">{{ recipe.rating }}</span></p>
+            <p><strong>Description:</strong> <span class="detail">{{ recipe.description or 'No description available.' }}</span></p>
+        </div>
 
-    <h2>Instructions</h2>
-    <ol>
-        {% for instruction in recipe.instructions %}
-            <li>{{ instruction.step_number }}. {{ instruction.instruction }}</li>
-        {% else %}
-            <li>No instructions available.</li>
-        {% endfor %}
-    </ol>
-<!-- hanleding the review part here  -->
-<form method="POST" action="{{ url_for('views.add_review', recipe_id=recipe.id) }}">
-    <label for="rating">Rating:</label>
-    <select name="rating" id="rating" required>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-    </select>
+        <h2>Ingredients</h2>
+        <ul>
+            {% for ingredient in recipe.ingredients %}
+                <li>{{ ingredient.ingredient }}</li>
+            {% else %}
+                <li>No ingredients listed.</li>
+            {% endfor %}
+        </ul>
 
-    <label for="comment">Comment:</label>
-    <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
+        <h2>Instructions</h2>
+        <ol>
+            {% for instruction in recipe.instructions %}
+                <li>{{ instruction.step_number }}. {{ instruction.instruction }}</li>
+            {% else %}
+                <li>No instructions available.</li>
+            {% endfor %}
+        </ol>
 
-    <button type="submit">Submit Review</button>
-</form>
+        <h2>Submit Review</h2>
+        <form method="POST" action="{{ url_for('views.add_review', recipe_id=recipe.id) }}">
+            <label for="rating">Rating:</label>
+            <select name="rating" id="rating" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
 
-<h2>Reviews</h2>
-<ul>
-    {% for review in recipe.reviews %}
-        <li><strong>{{ review.user.first_name }}:</strong> Rated {{ review.rating }} stars - {{ review.comment }}</li>
-    {% else %}
-        <li>No reviews yet.</li>
-    {% endfor %}
-</ul>
+            <label for="comment">Comment:</label>
+            <textarea name="comment" id="comment" rows="4" cols="50"></textarea>
 
+            <button type="submit">Submit Review</button>
+        </form>
 
-    {% endblock %}
-
-
-
+        <h2>Reviews</h2>
+        <ul>
+            {% for review in recipe.reviews %}
+                <li><strong>{{ review.user.first_name }}:</strong> Rated {{ review.rating }} stars - {{ review.comment }}</li>
+            {% else %}
+                <li>No reviews yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
