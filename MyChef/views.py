@@ -8,9 +8,9 @@
 # from werkzeug.utils import secure_filename
 # from yourapp import db  # Assuming you have your db object imported
 # from yourapp.models import Recipe, Ingredient, Instruction  # Assuming these models exist
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session
 from flask_login import login_required, current_user
-from .models import MealPlan, Tag
+from .models import FavoriteRecipe, MealPlan, Tag
 from datetime import datetime, timedelta
 import datetime
 from flask import Blueprint, render_template, request, flash, redirect, url_for
@@ -308,3 +308,60 @@ def add_review(recipe_id):
     db.session.commit()
     return redirect(url_for('views.recipe_details', recipe_id=recipe_id))
 ##################################
+
+
+######views for fav recipe#######
+
+@views.route('/favorite/<int:recipe_id>', methods=['POST'])
+@login_required
+def favorite_recipe(recipe_id):
+    # Check if the recipe exists
+    recipe = Recipe.query.get(recipe_id)
+    if not recipe:
+        flash("Recipe not found!", category='error')
+        return redirect(url_for('views.recipes'))  # Redirect to recipes page
+    
+    # Check if the recipe is already favorited by the user
+    existing_favorite = FavoriteRecipe.query.filter_by(user_id=current_user.id, recipe_id=recipe_id).first()
+    
+    if existing_favorite:
+        flash("Recipe is already in your favorites!", category='info')
+    else:
+        # Add the recipe to favorites
+        favorite = FavoriteRecipe(user_id=current_user.id, recipe_id=recipe_id)
+        db.session.add(favorite)
+        db.session.commit()
+        flash("Recipe added to favorites!", category='success')
+    
+    # Redirect back to the same page (either 'recipes' or 'favorites')
+    return redirect(request.referrer)  # This will sen
+
+
+
+
+@views.route('/favorites')
+@login_required
+def favorites():
+    # Use current_user from Flask-Login to get the logged-in user
+    user_id = current_user.id
+    
+    favorited_recipes = FavoriteRecipe.query.filter_by(user_id=user_id).join(Recipe).all()
+    return render_template('favorites.html', recipes=[fav.recipe for fav in favorited_recipes])
+
+
+
+@views.route('/unfavorite/<int:recipe_id>', methods=['POST'])
+@login_required
+def unfavorite_recipe(recipe_id):
+    # Find the favorite entry
+    favorite = FavoriteRecipe.query.filter_by(user_id=current_user.id, recipe_id=recipe_id).first()
+    
+    if favorite:
+        db.session.delete(favorite)
+        db.session.commit()
+        flash('Recipe removed from favorites.', 'success')
+    else:
+        flash('Recipe not found in your favorites.', 'error')
+    
+    # Redirect to the favorites page after removal
+    return redirect(url_for('views.favorites'))

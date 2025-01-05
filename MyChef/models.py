@@ -95,3 +95,15 @@ class Review(db.Model):
     user = db.relationship('User', backref='reviews')
     recipe = db.relationship('Recipe', backref='reviews_in_recipe')  # Updated backref
 ###########################
+
+
+##########favrecipe#########
+
+class FavoriteRecipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    category = db.Column(db.String(100), nullable=True)  # Optional category field for organization
+    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    user = db.relationship('User', backref='favorites', lazy=True)
+    recipe = db.relationship('Recipe', backref='favorited_by', lazy=True)

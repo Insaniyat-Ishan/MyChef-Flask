@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2>My Favorite Recipes</h2>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {% for category, message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if recipes %}
+            <div class="row">
+                {% for recipe in recipes %}
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            {% if recipe.image %}
+                                <img src="{{ url_for('static', filename=recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='uploads/default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ recipe.name }}</h5>
+                                <p class="card-text">{{ recipe.description[:100] }}...</p>
+
+                                <!-- View Recipe Details -->
+                                <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+
+                                <!-- Remove from Favorites -->
+                                <form action="{{ url_for('views.unfavorite_recipe', recipe_id=recipe.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>You haven't added any recipes to your favorites yet.</p>
+        {% endif %}
+    </div>
+{% endblock %}

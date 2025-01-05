@@ -24,6 +24,10 @@
           <li><a href="{{ url_for('views.add_recipe') }}">Add Recipe</a></li>
           <li><a href="{{ url_for('views.recipes') }}">View All Recipes</a></li>
           <li><a href="{{ url_for('views.add_meal') }}">Add Meal</a></li>
+          <!-- Corrected button for favorites -->
+          <li><a href="{{ url_for('views.favorites') }}">
+            <button class="btn">View Favorites</button>
+          </a></li>
         </ul>
       </div>
       <div class="logout-btn">

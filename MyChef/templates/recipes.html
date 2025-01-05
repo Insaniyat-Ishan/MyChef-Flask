@@ -1,38 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container">
-        <h2>All Recipes</h2>
+<div class="container">
+    <h2>All Recipes</h2>
 
-        <!-- Search Form -->
-        <form method="get" action="{{ url_for('views.recipes') }}">
-            <input type="text" name="name" placeholder="Search by name" value="{{ request.args.get('name') }}">
-            <input type="text" name="cuisine" placeholder="Search by cuisine" value="{{ request.args.get('cuisine') }}">
-            <button type="submit">Search</button>
-        </form>
+    <!-- Search Form -->
+    <form method="get" action="{{ url_for('views.recipes') }}">
+        <input type="text" name="name" placeholder="Search by name" value="{{ request.args.get('name') }}">
+        <input type="text" name="cuisine" placeholder="Search by cuisine" value="{{ request.args.get('cuisine') }}">
+        <button type="submit">Search</button>
+    </form>
 
-        <!-- Display Recipes -->
-        {% if recipes %}
-            <div class="row">
-                {% for recipe in recipes %}
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            {% if recipe.image %}
-                                <img src="{{ url_for('static', filename= recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
-                            {% else %}
-                                <img src="{{ url_for('static', filename='uploads/default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ recipe.name }}</h5>
-                                <p class="card-text">{{ recipe.description[:100] }}...</p>
-                                <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
-                            </div>
+    <!-- Display Recipes -->
+    {% if recipes %}
+        <div class="row">
+            {% for recipe in recipes %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        {% if recipe.image %}
+                            <img src="{{ url_for('static', filename= recipe.image) }}" class="card-img-top" alt="Recipe Image" height="200">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='uploads/default_recipe_image.jpg') }}" class="card-img-top" alt="Default Image" height="200">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ recipe.name }}</h5>
+                            <p class="card-text">{{ recipe.description[:100] }}...</p>
+                            
+                            <!-- View Details Button -->
+                            <a href="{{ url_for('views.recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary">View Details</a>
+
+                            <!-- Add to Favorites Button -->
+                            <form action="{{ url_for('views.favorite_recipe', recipe_id=recipe.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-warning">Favorite</button>
+                            </form>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No recipes available.</p>
-        {% endif %}
-    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No recipes available.</p>
+    {% endif %}
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <script>
+        // Display flash messages as pop-up
+        alert('{{ messages[0][1] }}');  // This will display the message content
+    </script>
+{% endif %}
+{% endwith %}
+
 {% endblock %}
