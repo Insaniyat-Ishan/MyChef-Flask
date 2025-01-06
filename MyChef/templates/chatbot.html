@@ -54,7 +54,7 @@
 </style>
     
 
-<!-- Floating Chat Button and Chat Box -->
+
 <div id="chat-container">
     <button id="chat-button" onclick="toggleChat()">💬</button>
     <div id="chat-box" class="hidden">
@@ -64,7 +64,7 @@
     </div>
 </div>
 
-<!-- JavaScript for Toggling Chat Box and Sending Messages -->
+
 <script>
 function toggleChat() {
     const chatBox = document.getElementById('chat-box');
@@ -94,28 +94,3 @@ function sendMessage() {
     });
 }
 </script>
-
-
-
-<!-- <div id="chat-box">
-    <div id="messages"></div>
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
-</div>
-
-<script>
-function sendMessage() {
-    const userInput = document.getElementById('user-input').value;
-    fetch('/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: userInput})
-    })
-    .then(response => response.json())
-    .then(data => {
-        const messageBox = document.getElementById('messages');
-        messageBox.innerHTML += `<p>User: ${userInput}</p>`;
-        messageBox.innerHTML += `<p>Bot: ${data.response}</p>`;
-    });
-}
-</script> -->

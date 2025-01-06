@@ -1,4 +1,4 @@
-from . import db  # No need to worry about circular import now
+from . import db 
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
@@ -18,10 +18,10 @@ class User(db.Model, UserMixin):
     diet_preference = db.Column(db.String(50), nullable=True)
     health_issues = db.Column(db.String(150), nullable=True)
 
-    # Relationship to MealPlan
+    
     meal_plans = db.relationship('MealPlan', back_populates='user')
 
-    # Relationship to Recipe
+    
     recipes = db.relationship('Recipe', back_populates='user')
 
 ########## DB FOR RECIPE ##########
@@ -35,14 +35,14 @@ class Recipe(db.Model):
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    # Relationships
+    
     reviews = db.relationship('Review', backref='reviews_in_recipe', cascade='all, delete-orphan')
     ingredients = db.relationship('Ingredient', backref='recipe', cascade='all, delete-orphan')
     instructions = db.relationship('Instruction', backref='recipe', cascade='all, delete-orphan')
     meal_plans = db.relationship('MealPlan', back_populates='recipe')
     tags = db.relationship('Tag', secondary='recipe_tags', backref=db.backref('tags_in_recipe', lazy='dynamic'))
 
-    # Relationship to User
+    
     user = db.relationship('User', back_populates='recipes')
 
 class Ingredient(db.Model):
@@ -66,7 +66,7 @@ class MealPlan(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)  # Foreign key to Recipe
 
-    # Explicit relationship names to avoid conflict
+    
     user = db.relationship('User', back_populates='meal_plans')
     recipe = db.relationship('Recipe', back_populates='meal_plans')
 
@@ -75,7 +75,7 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
 
-    # Relationship with Recipe (many-to-many via RecipeTags association table)
+    
     recipes = db.relationship('Recipe', secondary='recipe_tags', backref=db.backref('recipes_in_tag', lazy='dynamic'))
 
 
@@ -94,7 +94,7 @@ class Review(db.Model):
     comment = db.Column(db.Text, nullable=True)
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
 
-    # Relationships
+    
     user = db.relationship('User', backref='reviews')
     recipe = db.relationship('Recipe', backref='reviews_in_recipe')  # Updated backref
 ###########################

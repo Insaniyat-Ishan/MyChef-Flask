@@ -1,13 +1,3 @@
-# from flask import Blueprint, render_template
-# from flask_login import login_required
-
-# from flask_login import login_required, current_user
-
-# from flask import Blueprint, render_template, request, flash, redirect, url_for
-# from flask_login import login_required, current_user
-# from werkzeug.utils import secure_filename
-# from yourapp import db  # Assuming you have your db object imported
-# from yourapp.models import Recipe, Ingredient, Instruction  # Assuming these models exist
 from flask import Blueprint, render_template, session
 from flask_login import login_required, current_user
 from .models import FavoriteRecipe, MealPlan, Tag
@@ -24,9 +14,7 @@ views = Blueprint('views', __name__)
 @views.route('/')
 def home():
     if current_user.is_authenticated:
-        # If the user is logged in, redirect to the dashboard
         return redirect(url_for('views.dashboard'))
-    # If the user is not logged in, render the index page
     return render_template('index.html')
 
 
@@ -41,14 +29,11 @@ from datetime import datetime, timedelta, date  # Ensure you import timedelta he
 @views.route('/dashboard')
 @login_required
 def user_dashboard():
-    # Get the current date and calculate the start of the week (Monday)
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
     
-    # Query the meal plans for the current user
     meal_plans = MealPlan.query.filter_by(user_id=current_user.id).all()
 
-    # Prepare a list of meals for each day of the week
     weekly_meals = [
         {
             'day': start_of_week + timedelta(days=day),
@@ -57,12 +42,10 @@ def user_dashboard():
         for day in range(7)
     ]
 
-    # Render the dashboard template and pass the weekly meals
     return render_template('dashboard.html', weekly_meals=weekly_meals, start_of_week=start_of_week)
 
 
 
-#Recipe adding 
 import os
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'MyChef', 'static', 'uploads')
@@ -78,14 +61,12 @@ def add_recipe():
         name = request.form.get('name')
         description = request.form.get('description')
         cuisine = request.form.get('cuisine')
-        image = request.files.get('image')  # Get the uploaded file
+        image = request.files.get('image')  
 
-        # Validate input
         if not name or not cuisine:
             flash('Name and Cuisine are required!', category='error')
             return render_template('add_recipe.html', user=current_user)
 
-        # Handle image saving
         if image:
             print("I AM HERE")
             filename = secure_filename(image.filename)
@@ -95,7 +76,6 @@ def add_recipe():
         else:
             relative_image_path = None
 
-        # Create a new Recipe instance
         new_recipe = Recipe(
             name=name,
             description=description,
@@ -107,7 +87,6 @@ def add_recipe():
         db.session.add(new_recipe)
         db.session.commit()
 
-        # Add ingredients
         ingredients = request.form.get('ingredients')  # Make sure you collect all ingredients as a comma-separated string
         for ingredient in ingredients.split(','):
             new_ingredient = Ingredient(
@@ -116,7 +95,6 @@ def add_recipe():
             )
             db.session.add(new_ingredient)
 
-        # Add instructions
         instructions = request.form.get('instructions')  # Make sure you collect all instructions
         for step_number, instruction in enumerate(instructions.split('\n'), start=1):
             new_instruction = Instruction(
@@ -126,7 +104,6 @@ def add_recipe():
             )
             db.session.add(new_instruction)
 
-        # Commit everything to the database
         db.session.commit()
 
         flash('Recipe added successfully!', category='success')
@@ -138,7 +115,6 @@ def add_recipe():
 ######## ALL RECIPES ##############
 from sqlalchemy import func
 
-# Example of handling the search logic in your `recipes` route
 from flask import request, render_template
 from . import db
 from .models import Recipe
@@ -147,27 +123,21 @@ import logging
 @views.route('/recipes', methods=['GET', 'POST'])
 def recipes():
     filters = []
-    name_query = request.args.get('name')  # Search for recipe name
-    cuisine_query = request.args.get('cuisine')  # Search for cuisine
+    name_query = request.args.get('name')  
+    cuisine_query = request.args.get('cuisine')  
 
-    # Debugging: Log incoming query params
     logging.debug(f"Searching for Name: {name_query}, Cuisine: {cuisine_query}")
 
-    # Apply filter for recipe name if provided
     if name_query:
         filters.append(Recipe.name.ilike(f'%{name_query}%'))
 
-    # Apply filter for cuisine if provided
     if cuisine_query:
         filters.append(Recipe.cuisine.ilike(f'%{cuisine_query}%'))
 
-    # Debugging: Log the final filter query
     logging.debug(f"Final filters: {filters}")
 
-    # Apply the filters to the query
     filtered_recipes = Recipe.query.filter(*filters).all()
 
-    # Debugging: Log the SQL query
     logging.debug(f"SQL Query: {str(Recipe.query.filter(*filters))}")
 
     return render_template('recipes.html', recipes=filtered_recipes)
@@ -176,27 +146,17 @@ def recipes():
 @views.route('/recipe_details/<int:recipe_id>', methods=['GET'])
 def recipe_details(recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)
-    
-    # Calculate the average rating
     average_rating = (
         db.session.query(func.avg(Review.rating))
         .filter(Review.recipe_id == recipe_id)
         .scalar()
     )
     
-    # Round the average rating to one decimal place if it exists
     average_rating = round(average_rating, 1) if average_rating else "No ratings yet"
     
     return render_template('recipe_details.html', recipe=recipe, average_rating=average_rating)
 
 
-
-# @views.route('/recipe_details/<int:recipe_id>', methods=['GET'])
-# def recipe_details(recipe_id):
-#     recipe = Recipe.query.get_or_404(recipe_id)  # Fetch the recipe or return a 404 error if not found
-#     return render_template('recipe_details.html', recipe=recipe)
-
-######## MY RECIPE SECTION ########
 @views.route('/my_recipes', methods=['GET'])
 @login_required
 def my_recipes():
@@ -256,18 +216,14 @@ def chat():
 @views.route('/dashboard')
 @login_required
 def dashboard():
-    # Fetch the meal plan data for the logged-in user for the current week
     meal_plans = MealPlan.query.filter_by(user_id=current_user.id).all()
     
-    # Get the current date and calculate the week range
     today = datetime.today()
-    start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday of the current week
-    end_of_week = start_of_week + datetime.timedelta(days=6)  # Sunday of the current week
+    start_of_week = today - datetime.timedelta(days=today.weekday()) 
+    end_of_week = start_of_week + datetime.timedelta(days=6)  
     
-    # Filter the meal plans to show only those within this week
     weekly_meals = [meal for meal in meal_plans if start_of_week <= meal.date <= end_of_week]
 
-    # Pass meal plan data to the template
     return render_template('dashboard.html', meals=weekly_meals, start_of_week=start_of_week)
 
 
@@ -282,30 +238,25 @@ from flask_login import login_required, current_user
 @login_required
 def add_meal():
     if request.method == 'POST':
-        # Get the form data
         name = request.form['name']
-        date_string = request.form['date']  # Date format 'YYYY-MM-DD'
+        date_string = request.form['date'] 
         recipe_id = request.form['recipe_id']
         
-        # Convert the date string to a datetime.date object
         date_object = datetime.strptime(date_string, '%Y-%m-%d').date()
 
-        # Create a new meal plan entry
         meal_plan = MealPlan(
             name=name,
             date=date_object,
-            user_id=current_user.id,  # Use the logged-in user's ID
+            user_id=current_user.id,  
             recipe_id=recipe_id
         )
 
-        # Add and commit to the database
         db.session.add(meal_plan)
         db.session.commit()
 
         flash('Meal added successfully!', category='success')
         return redirect(url_for('views.user_dashboard'))  # Redirect to user dashboard
 
-    # Fetch all recipes to display in the dropdown
     recipes = Recipe.query.all()
     return render_template('add_meal.html', recipes=recipes)
 
@@ -314,7 +265,7 @@ def add_meal():
 # Route for removing a meal
 @views.route('/remove_meal/<int:meal_id>/<date>', methods=['POST'])
 def remove_meal(meal_id, date):
-    meal = MealPlan.query.get(meal_id)  # Changed Meal to MealPlan
+    meal = MealPlan.query.get(meal_id)  
     if meal:
         db.session.delete(meal)
         db.session.commit()
@@ -327,11 +278,10 @@ def replace_meal(meal_id, date):
     data = request.get_json()
     new_recipe_name = data.get('newRecipeName')
 
-    # Find the new recipe (this can be adjusted to your logic for replacing)
     new_recipe = Recipe.query.filter_by(name=new_recipe_name).first()
 
     if new_recipe:
-        meal = MealPlan.query.get(meal_id)  # Changed Meal to MealPlan
+        meal = MealPlan.query.get(meal_id)  
         if meal:
             meal.recipe = new_recipe
             db.session.commit()
@@ -362,26 +312,22 @@ def add_review(recipe_id):
 @views.route('/favorite/<int:recipe_id>', methods=['POST'])
 @login_required
 def favorite_recipe(recipe_id):
-    # Check if the recipe exists
     recipe = Recipe.query.get(recipe_id)
     if not recipe:
         flash("Recipe not found!", category='error')
-        return redirect(url_for('views.recipes'))  # Redirect to recipes page
+        return redirect(url_for('views.recipes'))  
     
-    # Check if the recipe is already favorited by the user
     existing_favorite = FavoriteRecipe.query.filter_by(user_id=current_user.id, recipe_id=recipe_id).first()
     
     if existing_favorite:
         flash("Recipe is already in your favorites!", category='info')
     else:
-        # Add the recipe to favorites
         favorite = FavoriteRecipe(user_id=current_user.id, recipe_id=recipe_id)
         db.session.add(favorite)
         db.session.commit()
         flash("Recipe added to favorites!", category='success')
     
-    # Redirect back to the same page (either 'recipes' or 'favorites')
-    return redirect(request.referrer)  # This will sen
+    return redirect(request.referrer)  
 
 
 
@@ -389,7 +335,6 @@ def favorite_recipe(recipe_id):
 @views.route('/favorites')
 @login_required
 def favorites():
-    # Use current_user from Flask-Login to get the logged-in user
     user_id = current_user.id
     
     favorited_recipes = FavoriteRecipe.query.filter_by(user_id=user_id).join(Recipe).all()
@@ -400,7 +345,6 @@ def favorites():
 @views.route('/unfavorite/<int:recipe_id>', methods=['POST'])
 @login_required
 def unfavorite_recipe(recipe_id):
-    # Find the favorite entry
     favorite = FavoriteRecipe.query.filter_by(user_id=current_user.id, recipe_id=recipe_id).first()
     
     if favorite:
@@ -410,5 +354,4 @@ def unfavorite_recipe(recipe_id):
     else:
         flash('Recipe not found in your favorites.', 'error')
     
-    # Redirect to the favorites page after removal
     return redirect(url_for('views.favorites'))
